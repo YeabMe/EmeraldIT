@@ -162,28 +162,38 @@
   <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i
       class="bi bi-arrow-up-short"></i></a>
 
+
       <script>
-        function downloadScript() {
-          const script = document.getElementById('script').value;
-          const windowPosition = document.getElementById('windowPosition').value;
-          const fileName = document.getElementById('fileName').value;
-      
-          const fileContent = `start "" chrome.exe --new-window --window-position="${windowPosition}" --user-data-dir="C:/tmp/Profiles/1" -kiosk -fullscreen -incognito  "http://localhost:8000/#/?cdm=4&url=https://api-coffee.emerald-games.com/${fileName}"`;
-      
-          const blob = new Blob([fileContent], { type: 'text/plain' });
-          const a = document.createElement('a');
-          a.href = URL.createObjectURL(blob);
-          a.download = `${fileName}.bat`;
-          document.body.appendChild(a);
-          a.click();
-          document.body.removeChild(a);
-        }
-        function resetForm() {
-    document.getElementById('script').value = '';
-    document.getElementById('windowPosition').value = '0,0';
-    document.getElementById('fileName').value = 'Keno';
-  }
-      </script>
+    function downloadScript() {
+        const script = document.getElementById('script').value;
+        const windowPosition = document.getElementById('windowPosition').value;
+        const fileName = document.getElementById('fileName').value;
+
+        // Extract the base URL from the provided script
+        const baseUrlMatch = script.match(/--url=("[^"]*")/);
+        const baseUrl = baseUrlMatch ? baseUrlMatch[1] : '';
+
+        // Construct the new script with modified window position and file name
+        const newScript = script.replace(/--window-position="[^"]*"/, `--window-position="${windowPosition}"`)
+                               .replace(/--user-data-dir="[^"]*"/, '--user-data-dir="C:/tmp/Profiles/1"')
+                               .replace(/--fullscreen/, `--url=${baseUrl}/${fileName}"`);
+
+        const blob = new Blob([newScript], { type: 'text/plain' });
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = `${fileName}.bat`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+    }
+
+    function resetForm() {
+        document.getElementById('script').value = '';
+        document.getElementById('windowPosition').value = '0,0';
+        document.getElementById('fileName').value = 'Keno';
+    }
+</script>
+
 
   <!-- Vendor JS Files -->
   <script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
